@@ -7,9 +7,10 @@ const double HoursPerDay = 24.0;
 const double MinutesPerHour = 60.0;
 const double SecondsPerMinute = 60.0;
 
-double secondsPerYear = DaysPerYear * HoursPerDay * MinutesPerHour * SecondsPerMinute;
-double secondsPerDay = HoursPerDay * MinutesPerHour * SecondsPerMinute;
+// Each unit is built from the previous one, so no product is computed twice.
 double secondsPerHour = MinutesPerHour * SecondsPerMinute;
+double secondsPerDay = HoursPerDay * secondsPerHour;
+double secondsPerYear = DaysPerYear * secondsPerDay;
 
 Console.Write("\n\n\n----------------------------  seconds-converter  ---------------------------- \n\n\n\n\n\n ");
 Console.Write("Enter the number of seconds: ");
@@ -19,26 +20,29 @@ string? input = Console.ReadLine();
 
 // TryParse reports failure through its return value rather than throwing, so a
 // malformed entry stays an ordinary branch instead of an exception to catch.
-if (double.TryParse(input, out double totalSeconds) && totalSeconds >= 0)
-{
-    // Each unit takes what it can; the remainder is carried down to the next one.
-    int years = (int)(totalSeconds / secondsPerYear);
-    totalSeconds %= secondsPerYear;
-
-    int days = (int)(totalSeconds / secondsPerDay);
-    totalSeconds %= secondsPerDay;
-
-    int hours = (int)(totalSeconds / secondsPerHour);
-    totalSeconds %= secondsPerHour;
-
-    int minutes = (int)(totalSeconds / SecondsPerMinute);
-    totalSeconds %= SecondsPerMinute;
-
-    int seconds = (int)totalSeconds;
-
-    Console.WriteLine($"\n\n\n\t{years} years, {days} days, {hours} hours, {minutes} minutes, {seconds} seconds");
-}
-else
+if (!double.TryParse(input, out double totalSeconds) || totalSeconds < 0)
 {
     Console.WriteLine("\n\n\n\t\t\t\t\t Invalid input. Please enter a valid number of seconds.");
+    return;
 }
+
+// The units run from largest to smallest. Each one takes what it can and hands
+// the remainder to the next, which is a single step repeated five times.
+(string Name, double Size)[] units =
+{
+    ("years", secondsPerYear),
+    ("days", secondsPerDay),
+    ("hours", secondsPerHour),
+    ("minutes", SecondsPerMinute),
+    ("seconds", 1.0),
+};
+
+List<string> parts = [];
+
+foreach ((string name, double size) in units)
+{
+    parts.Add($"{(int)(totalSeconds / size)} {name}");
+    totalSeconds %= size;
+}
+
+Console.WriteLine($"\n\n\n\t{string.Join(", ", parts)}");
