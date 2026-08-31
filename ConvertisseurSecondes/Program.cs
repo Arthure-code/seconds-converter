@@ -1,52 +1,44 @@
-﻿
+﻿// Converts a number of seconds into years, days, hours, minutes and seconds.
 
-// declaration de la  variable 'nombreSeconde' comme une variables de types double
-double nombreSeconde;
-const double joursAnnee = 365.25;
-const double secondeMin = 60.0;
-const double minHeure = 60.0;
-const double heureJour = 24.0;
+// The Julian year averages the leap day over a four-year cycle. A flat 365-day
+// year would drift by about six hours for every year converted.
+const double DaysPerYear = 365.25;
+const double HoursPerDay = 24.0;
+const double MinutesPerHour = 60.0;
+const double SecondsPerMinute = 60.0;
 
-//Conversion d'une annee en seconde
-double secondesAnnee = joursAnnee * heureJour * minHeure * secondeMin;
+double secondsPerYear = DaysPerYear * HoursPerDay * MinutesPerHour * SecondsPerMinute;
+double secondsPerDay = HoursPerDay * MinutesPerHour * SecondsPerMinute;
+double secondsPerHour = MinutesPerHour * SecondsPerMinute;
 
-//Conversion d'un jour en seconde
-double secondesJour = heureJour * minHeure * secondeMin;
+Console.Write("\n\n\n----------------------------  seconds-converter  ---------------------------- \n\n\n\n\n\n ");
+Console.Write("Enter the number of seconds: ");
 
-//Conversion d'une heure en seconde
-double secondesHeure = minHeure * secondeMin;
-
-Console.Write("\n\n\n----------------------------  convertisseurSecondes  ---------------------------- \n\n\n\n\n\n ");
-
-//demande a l'utilisateur d'entre un nombre
-Console.Write("Entrez le nombre de secondes : ");
-
-//La variable «input» pourra contenir des chaines de caractères ou etre null
+// ReadLine returns null once the input stream is closed, hence the nullable type.
 string? input = Console.ReadLine();
 
-/*verifie chaque fois que cette condition est vrai et si c'est le cas effectue les operation ci dessous
-verifie si la condition suplementaire est toujours vrain et fais les calculs*/
-
-if (double.TryParse(input, out nombreSeconde) && nombreSeconde >= 0)
+// TryParse reports failure through its return value rather than throwing, so a
+// malformed entry stays an ordinary branch instead of an exception to catch.
+if (double.TryParse(input, out double totalSeconds) && totalSeconds >= 0)
 {
-    int Annes = (int)(nombreSeconde / secondesAnnee);
-    nombreSeconde %= secondesAnnee;
+    // Each unit takes what it can; the remainder is carried down to the next one.
+    int years = (int)(totalSeconds / secondsPerYear);
+    totalSeconds %= secondsPerYear;
 
-    int jours = (int)(nombreSeconde / secondesJour);
-    nombreSeconde %= secondesJour;
+    int days = (int)(totalSeconds / secondsPerDay);
+    totalSeconds %= secondsPerDay;
 
-    int heurs = (int)(nombreSeconde / secondesHeure);
-    nombreSeconde %= secondesHeure;
+    int hours = (int)(totalSeconds / secondsPerHour);
+    totalSeconds %= secondsPerHour;
 
-    int minutes = (int)(nombreSeconde / secondeMin);
-    nombreSeconde %= secondeMin;
+    int minutes = (int)(totalSeconds / SecondsPerMinute);
+    totalSeconds %= SecondsPerMinute;
 
-    int secondes = (int)nombreSeconde;
+    int seconds = (int)totalSeconds;
 
-    // si la condition est verifie affiche le message ci dessous.
-    Console.WriteLine($"\n\n\n\t{Annes} années, {jours} jours, {heurs} heures, {minutes} minutes, {secondes} secondes");
+    Console.WriteLine($"\n\n\n\t{years} years, {days} days, {hours} hours, {minutes} minutes, {seconds} seconds");
 }
 else
-{   // dans le cas contraire affiche ce message
-    Console.WriteLine("\n\n\n\t\t\t\t\t Entrée invalide. Veuillez entrer un nombre valide de secondes.");
+{
+    Console.WriteLine("\n\n\n\t\t\t\t\t Invalid input. Please enter a valid number of seconds.");
 }
