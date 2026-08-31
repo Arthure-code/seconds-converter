@@ -23,7 +23,7 @@ Requires the [.NET SDK 9.0](https://dotnet.microsoft.com/download) or later.
 The duration is broken down through successive integer divisions, from the
 largest unit to the smallest, carrying the remainder at each step.
 
-A year is counted as 365.25 days — the Julian year — to account for leap years,
+A year is counted as 365.25 days, the Julian year, to account for leap years,
 which is 31,557,600 seconds. A flat 365-day year would drift by roughly six
 hours per converted year.
 
